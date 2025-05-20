@@ -1,0 +1,28 @@
+/* BACKGROUND */
+.root {
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #3a3a3a);
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* PULSANTI */
+.pulsanti {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.4), 4, 0, 2, 2);
+    -fx-transition: 0.3s;
+}
+
+.pulsanti:hover {
+    -fx-background-color: #2980b9;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+
+

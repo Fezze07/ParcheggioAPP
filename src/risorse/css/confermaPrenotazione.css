@@ -1,0 +1,59 @@
+.finestra-conferma {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #e0e0e0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 0, 4);
+}
+
+.titolo-popup {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 0 0 10 0;
+}
+
+.riepilogo-contenuto {
+    -fx-text-fill: #dddddd;
+    -fx-font-size: 14px;
+    -fx-padding: 10 0 20 0;
+}
+
+.bottone-popup {
+    -fx-background-color: #3c8dbc;
+    -fx-text-fill: white;
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 14px;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.bottone-popup:hover {
+    -fx-background-color: #337ab7;
+}
+
+.combo-selezione .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #2a2a2a;
+}
+
+.combo-selezione .list-cell:hover {
+    -fx-background-color: #444444;
+}
+
+.combo-selezione .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-selezione .combo-box-popup .list-view {
+    -fx-background-color: #2a2a2a;
+}
+
+.box-cancellazione {
+    -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
+    -fx-padding: 30px;
+    -fx-spacing: 20px;
+}

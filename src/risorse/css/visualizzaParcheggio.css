@@ -1,0 +1,66 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #2e2e2e);
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Griglia dei posti */
+.griglia-parcheggio {
+    -fx-hgap: 12;
+    -fx-vgap: 12;
+    -fx-alignment: center;
+    -fx-padding: 10;
+}
+
+.selezione-posto-container, .visualizza-parcheggio-container {
+    -fx-padding: 25;
+    -fx-spacing: 25;
+    -fx-alignment: center;
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.5, 0, 3);
+}
+
+.bottone-visualizza-conferma {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-pref-width: 300px;
+    -fx-pref-height: 50px;
+    -fx-text-alignment: center;
+}
+
+.bottone-visualizza-conferma:hover {
+    -fx-background-color: #00e6ac;
+}
+
+/* Posti occupati/liberi */
+.posto-occupato {
+    -fx-background-color: #d63031;
+    -fx-text-fill: white;
+}
+
+.posto-libero {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+}
+
+.posto-selezionato {
+    -fx-background-color: #0984e3;
+    -fx-text-fill: white;
+}
+
+.etichetta-periodo {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 10;
+    -fx-background-color: #2c3e50;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+

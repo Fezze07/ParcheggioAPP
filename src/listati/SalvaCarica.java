@@ -1,0 +1,188 @@
+package listati;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class SalvaCarica {
+    public static void esportaParcheggio(List<Posto> prenotazioni) {
+        if (prenotazioni == null || prenotazioni.isEmpty()) {
+            InterfacciaHelper.mostraErrore("Nessuna prenotazione da esportare!");
+            return;
+        }
+        File file = new File(System.getProperty("user.home") + "/parcheggio.csv");
+        try (FileWriter writer = new FileWriter(file)) {
+            // Scriviamo l'intestazione del CSV
+            writer.append("Utente,Nome,Cognome,Targa,Tipo,Data Arrivo,Orario Arrivo,Data Partenza,Orario Partenza,Costo,x,y\n");
+            for (Posto p : prenotazioni) {
+                String riga = String.join(",",
+                        p.utente().getTipo(),
+                        p.utente().getNomeUtente(),
+                        p.utente().getPassword(),
+                        p.nome(),
+                        p.cognome(),
+                        p.targa(),
+                        p.tipo(),
+                        p.dataArrivo().toLocalDate().toString(),
+                        p.dataArrivo().toLocalTime().toString(),
+                        p.dataPartenza().toLocalDate().toString(),
+                        p.dataPartenza().toLocalTime().toString(),
+                        String.format(Locale.US, "%.2f", p.costo()),
+                        String.valueOf(p.x()),
+                        String.valueOf(p.y())
+                );
+                writer.append(riga).append("\n");
+            }
+            InterfacciaHelper.mostraConferma("Dati esportati in: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            InterfacciaHelper.mostraErrore("Errore nell'esportazione del report:\n" + e.getMessage());
+        }
+    }
+
+    public static List<Posto> caricaParcheggio(File fileSelezionato) {
+        List<Posto> prenotazioni = new ArrayList<>();
+        List<String> righeValide = new ArrayList<>();
+        BufferedReader reader = null;
+        boolean fileCaricato = fileSelezionato != null;
+        try {
+            InputStream is;
+            if (fileSelezionato != null) {
+                is = new FileInputStream(fileSelezionato);
+            } else {
+                is = SalvaCarica.class.getResourceAsStream("/risorse/database/parcheggio.csv");
+                if (is == null) {
+                    InterfacciaHelper.mostraErrore("File parcheggio.csv non trovato.");
+                    return prenotazioni;
+                }
+            }
+            reader = new BufferedReader(new InputStreamReader(is));
+            String intestazione = reader.readLine();
+            if (intestazione == null) {
+                InterfacciaHelper.mostraErrore("Il file CSV è vuoto.");
+                return prenotazioni;
+            }
+            righeValide.add(intestazione);
+            String riga;
+            while ((riga = reader.readLine()) != null) {
+                String[] campi = riga.split(",");
+                if (campi.length != 14) {
+                    System.err.println("Riga malformata: " + riga);
+                    continue;
+                }
+                try {
+                    Utente utente = new Utente(campi[0], campi[1], campi[2]);
+                    String nome = campi[3];
+                    String cognome = campi[4];
+                    String targa = campi[5];
+                    String tipo = campi[6];
+                    LocalDateTime dataArrivo = LocalDateTime.of(
+                            LocalDate.parse(campi[7]),
+                            LocalTime.parse(campi[8])
+                    );
+                    LocalDateTime dataPartenza = LocalDateTime.of(
+                            LocalDate.parse(campi[9]),
+                            LocalTime.parse(campi[10])
+                    );
+                    if (dataPartenza.isBefore(LocalDateTime.now())) {
+                        continue;
+                    }
+                    double costo = Double.parseDouble(campi[11]);
+                    int x = Integer.parseInt(campi[12]);
+                    int y = Integer.parseInt(campi[13]);
+                    Posto p = new Posto(utente, nome, cognome, targa, tipo, costo, dataArrivo, dataPartenza, x, y);
+                    prenotazioni.add(p);
+                    righeValide.add(riga);
+                } catch (Exception e) {
+                    System.err.println("Riga saltata: " + riga);
+                }
+            }
+            if (fileCaricato) {
+                try (PrintWriter writer = new PrintWriter(fileSelezionato)) {
+                    for (String r : righeValide) {
+                        writer.println(r);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            InterfacciaHelper.mostraErrore("Errore nel caricamento:\n" + e.getMessage());
+        } finally {
+            try {
+                if (reader != null) reader.close();
+            } catch (IOException e) {
+                System.err.println("Errore nella chiusura del file.");
+            }
+        }
+        return prenotazioni;
+    }
+
+    public static void esportaUtenti(List<Utente> databaseUtenti) {
+        if (databaseUtenti == null || databaseUtenti.isEmpty()) {
+            InterfacciaHelper.mostraErrore("Nessun utente all'interno da esportare!");
+            return;
+        }
+        File file = new File(System.getProperty("user.home") + "/databaseUtenti.csv");
+        try (FileWriter writer = new FileWriter(file)) {
+            // Scriviamo l'intestazione del CSV
+            writer.append("Tipo,NomeUtente,Password\n");
+            for (Utente a : databaseUtenti) {
+                String riga = String.join(",",
+                        a.getTipo(),
+                        a.getNomeUtente(),
+                        a.getPassword()
+                );
+                writer.append(riga).append("\n");
+            }
+            InterfacciaHelper.mostraConferma("Dati esportati in: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            InterfacciaHelper.mostraErrore("Errore nell'esportazione del database:\n" + e.getMessage());
+        }
+    }
+
+    public static List<Utente> caricaUtenti(File fileSelezionato) {
+        List<Utente> database = new ArrayList<>();
+        BufferedReader reader = null;
+        try {
+            InputStream is;
+            if (fileSelezionato != null) {
+                is = new FileInputStream(fileSelezionato);
+            } else {
+                is = SalvaCarica.class.getResourceAsStream("/risorse/database/databaseUtenti.csv");
+                if (is == null) {
+                    InterfacciaHelper.mostraErrore("File databaseUtenti.csv non trovato.");
+                    return database;
+                }
+            }
+            reader = new BufferedReader(new InputStreamReader(is));
+            String riga = reader.readLine();
+            if (riga == null) {
+                return database;
+            }
+            while ((riga = reader.readLine()) != null) {
+                String[] campi = riga.split(",");
+                if (campi.length != 3) {
+                    System.err.println("Riga malformata: " + riga);
+                    continue;
+                }
+                try {
+                    Utente a = new Utente(campi[0], campi[1], campi[2]);
+                    database.add(a);
+                } catch (Exception e) {
+                    System.err.println("Riga saltata: " + riga);
+                }
+            }
+        } catch (Exception e) {
+            InterfacciaHelper.mostraErrore("Errore nel caricamento:\n" + e.getMessage());
+        } finally {
+            try {
+                if (reader != null) reader.close();
+            } catch (IOException e) {
+                System.err.println("Errore nella chiusura del file.");
+            }
+        }
+        return database;
+    }
+}

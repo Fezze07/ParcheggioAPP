@@ -1,0 +1,40 @@
+/* POPUP */
+.popupAnimazioni {
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #3a3a3a);
+    -fx-padding: 20;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 0, 0);
+}
+
+.popupAnimazioni-text {
+    -fx-font-size: 25px;
+    -fx-text-fill: white;
+    -fx-font-weight: normal;
+    -fx-text-alignment: center;
+    -fx-line-spacing: 4px;
+}
+
+.popupAnimazioni-text-evidenziato {
+    -fx-font-weight: bold;
+    -fx-font-size: 30px;
+    -fx-fill: #00BCD4;
+}
+
+.popupAnimazioni .button {
+    -fx-background-color: linear-gradient(to right, #4CAF50, #2E7D32);
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 1);
+}
+
+.popupAnimazioni .button:hover {
+    -fx-background-color: linear-gradient(to right, #66BB6A, #388E3C);
+}

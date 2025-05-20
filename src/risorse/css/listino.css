@@ -1,0 +1,40 @@
+/* --- LISTINO PREZZI  --- */
+.listino-grid {
+    -fx-background-color: linear-gradient(to bottom, #2c3e50, #34495e); /* blu notte sfumato */
+    -fx-border-color: #1abc9c;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 20px;
+    -fx-hgap: 40px;
+    -fx-vgap: 15px;
+}
+
+.listino-grid Label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.intestazione-colonne {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-alignment: center;
+}
+
+.titolo-sezione {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1abc9c;
+    -fx-alignment: center;
+    -fx-padding: 10px 0 5px 0;
+}
+
+.cella-centrata {
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-font-size: 16px;
+}
+.grassetto {
+    -fx-font-weight: bold;
+}
+
