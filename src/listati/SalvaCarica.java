@@ -14,7 +14,7 @@ public class SalvaCarica {
             InterfacciaHelper.mostraErrore("Nessuna prenotazione da esportare!");
             return;
         }
-        File file = new File(System.getProperty("user.home") + "/parcheggio.csv");
+        File file = new File("risorse/database/parcheggio.csv");
         try (FileWriter writer = new FileWriter(file)) {
             // Scriviamo l'intestazione del CSV
             writer.append("Utente,Nome,Cognome,Targa,Tipo,Data Arrivo,Orario Arrivo,Data Partenza,Orario Partenza,Costo,x,y\n");
@@ -37,7 +37,6 @@ public class SalvaCarica {
                 );
                 writer.append(riga).append("\n");
             }
-            InterfacciaHelper.mostraConferma("Dati esportati in: " + file.getAbsolutePath());
         } catch (IOException e) {
             InterfacciaHelper.mostraErrore("Errore nell'esportazione del report:\n" + e.getMessage());
         }
@@ -124,7 +123,7 @@ public class SalvaCarica {
             InterfacciaHelper.mostraErrore("Nessun utente all'interno da esportare!");
             return;
         }
-        File file = new File(System.getProperty("user.home") + "/databaseUtenti.csv");
+        File file = new File("risorse/database/databaseUtenti.csv");
         try (FileWriter writer = new FileWriter(file)) {
             // Scriviamo l'intestazione del CSV
             writer.append("Tipo,NomeUtente,Password\n");

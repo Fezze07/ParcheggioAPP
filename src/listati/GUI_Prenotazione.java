@@ -335,13 +335,13 @@ public class GUI_Prenotazione {
                                        CheckBox checkBoxOpzioni, Button scegliPosto, VBox boxOpzioniExtra, HBox pulsanti) {
         impostaMarginiVert(campoNome, 10, 0);
         impostaMarginiVert(campoCognome, 0, 10);
-        impostaMarginiVert(comboTipo, 10, 0);
-        impostaMarginiVert(campoTarga, 0, 25);
         impostaMarginiVert(dataPicker, 0, 10);
         impostaMarginiVert(boxOrari, 15, 15);
-        impostaMarginiVert(checkBoxOpzioni, 10, 10);
-        impostaMarginiVert(boxOpzioniExtra, 0, 25);
+        impostaMarginiVert(comboTipo, 10, 0);
+        impostaMarginiVert(campoTarga, 0, 10);
         impostaMarginiVert(scegliPosto, 10, 25);
+        impostaMarginiVert(checkBoxOpzioni, 10, 25);
+        impostaMarginiVert(boxOpzioniExtra, 0, 25);
         impostaMarginiVert(labelCosto, 0, 10);
         impostaMarginiVert(pulsanti, 20, 0);
     }
@@ -369,5 +369,11 @@ public class GUI_Prenotazione {
                 cb.setSelected(temp.opzioniSelezionate.contains(cb.getText()));
         InterfacciaHelper.toggleBox(boxOpzioniExtra, checkBoxOpzioni.isSelected());
         aggiornaStatoBottoneScegliPosto(scegliPosto, dataPicker, sliderArrivo, sliderPartenza);
+        aggiornaLabelCosto(temp.tipo, temp.data, sliderArrivo, sliderPartenza, temp.usaOpzioni, opzioni);
+    }
+
+    private static void aggiornaLabelCosto(String tipo, LocalDate data, Slider orarioArrivo, Slider orarioPartenza, boolean usaExtra, CheckBox[] opzioniExtra) {
+        double costo = GestionePrenotazioni.calcolaCosto(tipo, data, orarioArrivo, orarioPartenza, usaExtra, opzioniExtra);
+        labelCosto.setText("Costo della prenotazione: " + costo + " euro");
     }
 }
