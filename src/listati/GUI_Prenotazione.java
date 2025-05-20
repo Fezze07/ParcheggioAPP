@@ -324,7 +324,7 @@ public class GUI_Prenotazione {
         VBox tabellaPrezziBox = new VBox(5);
         tabellaPrezziBox.setPadding(new Insets(20));
         tabellaPrezziBox.setPrefWidth(500);
-        GridPane listinoPrezzi = Prezzi.creaListinoPrezzi();
+        GridPane listinoPrezzi = ListinoPrezzi.creaListinoPrezzi();
         listinoPrezzi.setAlignment(Pos.CENTER_RIGHT);
         tabellaPrezziBox.getChildren().addAll(listinoPrezzi);
         return tabellaPrezziBox;

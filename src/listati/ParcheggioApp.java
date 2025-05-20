@@ -27,6 +27,7 @@ public class ParcheggioApp extends Application {
 
         GestioneParcheggio.caricaParcheggio();
         GestioneUtenti.caricaDatabaseUtenti();
+        GestioneParcheggio.caricaPrezzi();
         InterfacciaHelper.autenticazione();
     }
 
@@ -48,9 +49,11 @@ public class ParcheggioApp extends Application {
         Button pulsEsportaDatabase = InterfacciaHelper.creaPulsante("Esporta database parcheggio", _ -> GestioneParcheggio.esportaParcheggio());
         Button pulsCaricaDatabaseUtenti = InterfacciaHelper.creaPulsante("Carica database utenti", _ -> GestioneUtenti.caricaDatabaseUtenti());
         Button pulsVisualizzaPrenotazioniAttive = InterfacciaHelper.creaPulsante("Visualizza prenotazioni attive", _ -> GestioneParcheggio.visualizzaPrenotazioniAttive(utente));
+        Button pulsModificaOrari = InterfacciaHelper.creaPulsante("Modifica orari", _ -> GestioneUtenti.cancellaUtenteAdmin(utente));
+        Button pulsGestioneTariffe = InterfacciaHelper.creaPulsante("Gestione tariffe", _ -> FunzioniAdmin.modificaTariffe(utente));
+        Button pulsBlackout = InterfacciaHelper.creaPulsante("Gestione blackout", _ -> GestioneUtenti.cancellaUtenteAdmin(utente));
         Button pulsLogout = InterfacciaHelper.creaPulsante("Logout", _ -> InterfacciaHelper.effettuaLogout());
-
-        VBox layout = creaLayoutMenu(pulsSimulaPrenotazione, pulsCancellaUtenti, pulsEsportaDatabase, pulsCaricaDatabaseUtenti, pulsVisualizzaPrenotazioniAttive, pulsLogout);
+        VBox layout = creaLayoutMenu(pulsSimulaPrenotazione, pulsCancellaUtenti, pulsEsportaDatabase, pulsCaricaDatabaseUtenti, pulsVisualizzaPrenotazioniAttive, pulsModificaOrari, pulsGestioneTariffe, pulsBlackout, pulsLogout);
         base.setCenter(layout);
     }
 

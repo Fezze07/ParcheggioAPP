@@ -1,6 +1,7 @@
 package listati;
 
 import java.io.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,6 +16,7 @@ public class SalvaCarica {
             return;
         }
         File file = new File("risorse/database/parcheggio.csv");
+        file.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(file)) {
             // Scriviamo l'intestazione del CSV
             writer.append("Utente,Nome,Cognome,Targa,Tipo,Data Arrivo,Orario Arrivo,Data Partenza,Orario Partenza,Costo,x,y\n");
@@ -124,6 +126,7 @@ public class SalvaCarica {
             return;
         }
         File file = new File("risorse/database/databaseUtenti.csv");
+        file.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(file)) {
             // Scriviamo l'intestazione del CSV
             writer.append("Tipo,NomeUtente,Password\n");
@@ -135,7 +138,6 @@ public class SalvaCarica {
                 );
                 writer.append(riga).append("\n");
             }
-            InterfacciaHelper.mostraConferma("Dati esportati in: " + file.getAbsolutePath());
         } catch (IOException e) {
             InterfacciaHelper.mostraErrore("Errore nell'esportazione del database:\n" + e.getMessage());
         }
@@ -183,5 +185,47 @@ public class SalvaCarica {
             }
         }
         return database;
+    }
+
+    public static void salvaPrezzi() {
+        File file = new File("risorse/database/tariffe.txt");
+        file.getParentFile().mkdirs();
+        try (FileWriter writer = new FileWriter(file)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Prezzi.costoOrario).append("\n");
+            Prezzi.prezziBaseVeicoli.forEach((k, v) -> sb.append("VEICOLO;").append(k).append(";").append(v).append("\n"));
+            Prezzi.prezziOpzioni.forEach((k, v) -> sb.append("OPZIONE;").append(k).append(";").append(v).append("\n"));
+            Prezzi.prezziGiorni.forEach((k, v) -> sb.append("GIORNO;").append(k).append(";").append(v).append("\n"));
+            writer.write(sb.toString());
+        } catch (IOException e) {
+            InterfacciaHelper.mostraErrore("Errore nell'esportazione dei prezzi:\n" + e.getMessage());
+        }
+        System.out.println(file.getAbsolutePath());
+    }
+
+    public static void caricaPrezzi() {
+        File file = new File("risorse/database/tariffe.txt");
+        if (!file.exists()) return;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            Prezzi.costoOrario = Double.parseDouble(reader.readLine());
+            Prezzi.prezziBaseVeicoli.clear();
+            Prezzi.prezziOpzioni.clear();
+            Prezzi.prezziGiorni.clear();
+            String riga;
+            while ((riga = reader.readLine()) != null) {
+                String[] campi = riga.split(";");
+                if (campi.length != 3) continue;
+                String tipo = campi[0];
+                String chiave = campi[1];
+                int valore = Integer.parseInt(campi[2]);
+                switch (tipo) {
+                    case "VEICOLO" -> Prezzi.prezziBaseVeicoli.put(chiave, valore);
+                    case "OPZIONE" -> Prezzi.prezziOpzioni.put(Integer.parseInt(chiave),  valore);
+                    case "GIORNO" -> Prezzi.prezziGiorni.put(DayOfWeek.valueOf(chiave), valore);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            InterfacciaHelper.mostraErrore("Errore nel caricamento tariffe:\n" + e.getMessage());
+        }
     }
 }

@@ -33,6 +33,10 @@ public class GestioneParcheggio {
         postiPrenotati.addAll(caricati);
     }
 
+    public static void caricaPrezzi() {
+        SalvaCarica.caricaPrezzi();
+    }
+
     public static void visualizzaPrenotazioniAttive(Utente utente) {
         FunzioniAdmin.visualizzaPrenotazioniAttive(postiPrenotati, utente);
     }
