@@ -200,7 +200,6 @@ public class SalvaCarica {
         } catch (IOException e) {
             InterfacciaHelper.mostraErrore("Errore nell'esportazione dei prezzi:\n" + e.getMessage());
         }
-        System.out.println(file.getAbsolutePath());
     }
 
     public static void caricaPrezzi() {

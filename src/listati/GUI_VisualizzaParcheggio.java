@@ -116,7 +116,7 @@ public class GUI_VisualizzaParcheggio {
         String testo = "🕒 Parcheggio da: " + arrivo.format(formatter) + " a " + partenza.format(formatter);
         Label labelPeriodo = new Label(testo);
         labelPeriodo.getStyleClass().add("etichetta-periodo");
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuUtente(utente));
 
         VBox layout = new VBox(20, labelPeriodo,  griglia, esci);
         layout.getStyleClass().add("visualizza-parcheggio-container");

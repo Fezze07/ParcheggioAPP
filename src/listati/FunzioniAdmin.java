@@ -16,6 +16,7 @@ import java.util.function.Function;
 
 public class FunzioniAdmin {
     private static BorderPane base;
+
     public static void setBase(BorderPane root) {
         base = root;
     }
@@ -115,7 +116,7 @@ public class FunzioniAdmin {
                 if (vuoto || p == null) {
                     setText(null);
                 } else {
-                    setText("Utente: " + p.utente()+
+                    setText("Utente: " + p.utente() +
                             " | Posto " + p.x() + "," + p.y() +
                             "📅 " + p.dataArrivo().format(formatter) + " - " + p.dataPartenza().format(formatter) +
                             " | 🚗 " + p.targa() +
@@ -247,13 +248,14 @@ public class FunzioniAdmin {
         root.getChildren().addAll(sezioneVeicoli, sezioneOpzioni, sezioneGiorni, orarioBox, salva, esci);
         base.setCenter(root);
     }
+
     private static <T> TitledPane creaSezionePrezzi(String titolo, Function<T, Integer> getter, BiConsumer<T, Integer> setter, Map<T, String> etichette) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         int riga = 0;
         for (T chiave : etichette.keySet()) {
-            Label label = new Label(etichette.get(chiave)+ ":");
+            Label label = new Label(etichette.get(chiave) + ":");
             TextField campo = new TextField(String.valueOf(getter.apply(chiave)));
             grid.add(label, 0, riga);
             grid.add(campo, 1, riga);
