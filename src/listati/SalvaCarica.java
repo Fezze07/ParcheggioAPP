@@ -1,6 +1,7 @@
 package listati;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,31 +16,33 @@ public class SalvaCarica {
             InterfacciaHelper.mostraErrore("Nessuna prenotazione da esportare!");
             return;
         }
-        File file = new File("risorse/database/parcheggio.csv");
-        file.getParentFile().mkdirs();
-        try (FileWriter writer = new FileWriter(file)) {
-            // Scriviamo l'intestazione del CSV
-            writer.append("Utente,Nome,Cognome,Targa,Tipo,Data Arrivo,Orario Arrivo,Data Partenza,Orario Partenza,Costo,x,y\n");
-            for (Posto p : prenotazioni) {
-                String riga = String.join(",",
-                        p.utente().getTipo(),
-                        p.utente().getNomeUtente(),
-                        p.utente().getPassword(),
-                        p.nome(),
-                        p.cognome(),
-                        p.targa(),
-                        p.tipo(),
-                        p.dataArrivo().toLocalDate().toString(),
-                        p.dataArrivo().toLocalTime().toString(),
-                        p.dataPartenza().toLocalDate().toString(),
-                        p.dataPartenza().toLocalTime().toString(),
-                        String.format(Locale.US, "%.2f", p.costo()),
-                        String.valueOf(p.x()),
-                        String.valueOf(p.y())
-                );
-                writer.append(riga).append("\n");
+        try {
+            String pathFile = GestoreDatabase.getPathDatabase("parcheggio.csv");
+            File file = new File(pathFile);
+            try (FileWriter writer = new FileWriter(file)) {
+                // Scriviamo l'intestazione del CSV
+                writer.append("Utente,Nome,Cognome,Targa,Tipo,Data Arrivo,Orario Arrivo,Data Partenza,Orario Partenza,Costo,x,y\n");
+                for (Posto p : prenotazioni) {
+                    String riga = String.join(",",
+                            p.utente().getTipo(),
+                            p.utente().getNomeUtente(),
+                            p.utente().getPassword(),
+                            p.nome(),
+                            p.cognome(),
+                            p.targa(),
+                            p.tipo(),
+                            p.dataArrivo().toLocalDate().toString(),
+                            p.dataArrivo().toLocalTime().toString(),
+                            p.dataPartenza().toLocalDate().toString(),
+                            p.dataPartenza().toLocalTime().toString(),
+                            String.format(Locale.US, "%.2f", p.costo()),
+                            String.valueOf(p.x()),
+                            String.valueOf(p.y())
+                    );
+                    writer.append(riga).append("\n");
+                }
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             InterfacciaHelper.mostraErrore("Errore nell'esportazione del report:\n" + e.getMessage());
         }
     }
@@ -51,14 +54,13 @@ public class SalvaCarica {
         boolean fileCaricato = fileSelezionato != null;
         try {
             InputStream is;
-            if (fileSelezionato != null) {
+            if (fileCaricato) {
                 is = new FileInputStream(fileSelezionato);
             } else {
-                is = SalvaCarica.class.getResourceAsStream("/risorse/database/parcheggio.csv");
-                if (is == null) {
-                    InterfacciaHelper.mostraErrore("File parcheggio.csv non trovato.");
-                    return prenotazioni;
-                }
+                String pathFile = GestoreDatabase.getPathDatabase("parcheggio.csv");
+                File file = new File(pathFile);
+                if (!file.exists()) return prenotazioni;
+                is = new FileInputStream(file);
             }
             reader = new BufferedReader(new InputStreamReader(is));
             String intestazione = reader.readLine();
@@ -71,7 +73,7 @@ public class SalvaCarica {
             while ((riga = reader.readLine()) != null) {
                 String[] campi = riga.split(",");
                 if (campi.length != 14) {
-                    System.err.println("Riga malformata: " + riga);
+                    System.err.println("Riga malformata in parcheggio: " + riga);
                     continue;
                 }
                 try {
@@ -98,7 +100,7 @@ public class SalvaCarica {
                     prenotazioni.add(p);
                     righeValide.add(riga);
                 } catch (Exception e) {
-                    System.err.println("Riga saltata: " + riga);
+                    System.err.println("Riga saltata in parcheggio: " + riga);
                 }
             }
             if (fileCaricato) {
@@ -125,20 +127,21 @@ public class SalvaCarica {
             InterfacciaHelper.mostraErrore("Nessun utente all'interno da esportare!");
             return;
         }
-        File file = new File("risorse/database/databaseUtenti.csv");
-        file.getParentFile().mkdirs();
-        try (FileWriter writer = new FileWriter(file)) {
-            // Scriviamo l'intestazione del CSV
-            writer.append("Tipo,NomeUtente,Password\n");
-            for (Utente a : databaseUtenti) {
-                String riga = String.join(",",
-                        a.getTipo(),
-                        a.getNomeUtente(),
-                        a.getPassword()
-                );
-                writer.append(riga).append("\n");
+        try {
+            String pathFile = GestoreDatabase.getPathDatabase("databaseUtenti.csv");
+            File file = new File(pathFile);
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.append("Tipo,NomeUtente,Password\n");
+                for (Utente a : databaseUtenti) {
+                    String riga = String.join(",",
+                            a.getTipo(),
+                            a.getNomeUtente(),
+                            a.getPassword()
+                    );
+                    writer.append(riga).append("\n");
+                }
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             InterfacciaHelper.mostraErrore("Errore nell'esportazione del database:\n" + e.getMessage());
         }
     }
@@ -151,11 +154,10 @@ public class SalvaCarica {
             if (fileSelezionato != null) {
                 is = new FileInputStream(fileSelezionato);
             } else {
-                is = SalvaCarica.class.getResourceAsStream("/risorse/database/databaseUtenti.csv");
-                if (is == null) {
-                    InterfacciaHelper.mostraErrore("File databaseUtenti.csv non trovato.");
-                    return database;
-                }
+                String pathFile = GestoreDatabase.getPathDatabase("databaseUtenti.csv");
+                File file = new File(pathFile);
+                if (!file.exists()) return database;
+                is = new FileInputStream(file);
             }
             reader = new BufferedReader(new InputStreamReader(is));
             String riga = reader.readLine();
@@ -165,14 +167,14 @@ public class SalvaCarica {
             while ((riga = reader.readLine()) != null) {
                 String[] campi = riga.split(",");
                 if (campi.length != 3) {
-                    System.err.println("Riga malformata: " + riga);
+                    System.err.println("Riga malformata in utenti: " + riga);
                     continue;
                 }
                 try {
                     Utente a = new Utente(campi[0], campi[1], campi[2]);
                     database.add(a);
                 } catch (Exception e) {
-                    System.err.println("Riga saltata: " + riga);
+                    System.err.println("Riga saltata in utenti: " + riga);
                 }
             }
         } catch (Exception e) {
@@ -188,42 +190,47 @@ public class SalvaCarica {
     }
 
     public static void salvaPrezzi() {
-        File file = new File("risorse/database/tariffe.txt");
-        file.getParentFile().mkdirs();
-        try (FileWriter writer = new FileWriter(file)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(Prezzi.costoOrario).append("\n");
-            Prezzi.prezziBaseVeicoli.forEach((k, v) -> sb.append("VEICOLO;").append(k).append(";").append(v).append("\n"));
-            Prezzi.prezziOpzioni.forEach((k, v) -> sb.append("OPZIONE;").append(k).append(";").append(v).append("\n"));
-            Prezzi.prezziGiorni.forEach((k, v) -> sb.append("GIORNO;").append(k).append(";").append(v).append("\n"));
-            writer.write(sb.toString());
-        } catch (IOException e) {
-            InterfacciaHelper.mostraErrore("Errore nell'esportazione dei prezzi:\n" + e.getMessage());
+        try {
+            String pathFile = GestoreDatabase.getPathDatabase("tariffe.txt");
+            File file = new File(pathFile);
+            try (FileWriter writer = new FileWriter(file)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(Prezzi.costoOrario).append("\n");
+                Prezzi.prezziBaseVeicoli.forEach((k, v) -> sb.append("VEICOLO;").append(k).append(";").append(v).append("\n"));
+                Prezzi.prezziOpzioni.forEach((k, v) -> sb.append("OPZIONE;").append(k).append(";").append(v).append("\n"));
+                Prezzi.prezziGiorni.forEach((k, v) -> sb.append("GIORNO;").append(k).append(";").append(v).append("\n"));
+                writer.write(sb.toString());
+            }
+        } catch (IOException | URISyntaxException e) {
+            InterfacciaHelper.mostraErrore("Errore nell'esportazione delle tariffe:\n" + e.getMessage());
         }
     }
 
     public static void caricaPrezzi() {
-        File file = new File("risorse/database/tariffe.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            Prezzi.costoOrario = Double.parseDouble(reader.readLine());
-            Prezzi.prezziBaseVeicoli.clear();
-            Prezzi.prezziOpzioni.clear();
-            Prezzi.prezziGiorni.clear();
-            String riga;
-            while ((riga = reader.readLine()) != null) {
-                String[] campi = riga.split(";");
-                if (campi.length != 3) continue;
-                String tipo = campi[0];
-                String chiave = campi[1];
-                int valore = Integer.parseInt(campi[2]);
-                switch (tipo) {
-                    case "VEICOLO" -> Prezzi.prezziBaseVeicoli.put(chiave, valore);
-                    case "OPZIONE" -> Prezzi.prezziOpzioni.put(Integer.parseInt(chiave),  valore);
-                    case "GIORNO" -> Prezzi.prezziGiorni.put(DayOfWeek.valueOf(chiave), valore);
+        try {
+            String pathFile = GestoreDatabase.getPathDatabase("tariffe.txt");
+            File file = new File(pathFile);
+            if (!file.exists()) return;
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                Prezzi.costoOrario = Double.parseDouble(reader.readLine());
+                Prezzi.prezziBaseVeicoli.clear();
+                Prezzi.prezziOpzioni.clear();
+                Prezzi.prezziGiorni.clear();
+                String riga;
+                while ((riga = reader.readLine()) != null) {
+                    String[] campi = riga.split(";");
+                    if (campi.length != 3) continue;
+                    String tipo = campi[0];
+                    String chiave = campi[1];
+                    int valore = Integer.parseInt(campi[2]);
+                    switch (tipo) {
+                        case "VEICOLO" -> Prezzi.prezziBaseVeicoli.put(chiave, valore);
+                        case "OPZIONE" -> Prezzi.prezziOpzioni.put(Integer.parseInt(chiave), valore);
+                        case "GIORNO" -> Prezzi.prezziGiorni.put(DayOfWeek.valueOf(chiave), valore);
+                    }
                 }
             }
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException | URISyntaxException | NumberFormatException e) {
             InterfacciaHelper.mostraErrore("Errore nel caricamento tariffe:\n" + e.getMessage());
         }
     }

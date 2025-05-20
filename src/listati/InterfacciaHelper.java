@@ -246,7 +246,7 @@ public class InterfacciaHelper {
     }
 
     public static void effettuaLogout() {
-        GUI_GestioneUtenti.autenticazione(null, utente -> {
+        GUI_GestioneUtenti.autenticazione(utente -> {
             if (utente == null) return;
             if ("Admin".equals(utente.getTipo())) {
                 ParcheggioApp.mostraMenuAdmin(utente);

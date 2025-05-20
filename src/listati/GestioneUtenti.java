@@ -15,7 +15,7 @@ public class GestioneUtenti {
         databaseUtenti.remove(a);
     }
 
-    public static Utente ritornaUtente(String nome) {
+    public Utente ritornaUtente(String nome) {
         for (Utente u : databaseUtenti) {
             if (u.getNomeUtente().equals(nome)) return u;
         }

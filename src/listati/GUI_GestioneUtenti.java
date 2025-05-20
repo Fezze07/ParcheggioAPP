@@ -22,9 +22,9 @@ public class GUI_GestioneUtenti {
         base = root;
     }
 
-    public static void autenticazione(Utente utente, Consumer<Utente> callback) {
-        Button pulsAccedi = InterfacciaHelper.creaPulsante("Accedi", _-> accedi(callback, utente));
-        Button pulsRegistrati = InterfacciaHelper.creaPulsante("Registrati", _ -> registrati(utente));
+    public static void autenticazione(Consumer<Utente> callback) {
+        Button pulsAccedi = InterfacciaHelper.creaPulsante("Accedi", _-> accedi(callback));
+        Button pulsRegistrati = InterfacciaHelper.creaPulsante("Registrati", _ -> registrati(callback));
         Button pulsChiSiamo = InterfacciaHelper.creaPulsante("Chi siamo?", _ -> Animazioni.mostraInfoChiSiamo());
         pulsChiSiamo.getStyleClass().add("chi-siamo");
 
@@ -67,7 +67,7 @@ public class GUI_GestioneUtenti {
         base.setCenter(layout);
     }
 
-    public static void accedi(Consumer<Utente> callback, Utente utente) {
+    public static void accedi(Consumer<Utente> callback) {
         // Crea i campi per inserire i dati
         Label labelNome = InterfacciaHelper.creaLabel("Nome Utente");
         TextField campoNome = InterfacciaHelper.creaCampoTesto("");
@@ -79,15 +79,15 @@ public class GUI_GestioneUtenti {
             String nome = campoNome.getText();
             String password = campoPassword.getText();
             if (gestioneUtenti.verificaCredenziali(nome, password)) {
-                Utente u = GestioneUtenti.ritornaUtente(nome);
+                Utente u = gestioneUtenti.ritornaUtente(nome);
                 callback.accept(u);
             } else {
                 InterfacciaHelper.mostraErrore("Impossibile trovare l'utente");
             }
         });
-        Button indietro = InterfacciaHelper.creaPulsante("Non ancora registrato, fallo ora qua sotto!", _ -> registrati(utente));
+        Button indietro = InterfacciaHelper.creaPulsante("Non ancora registrato, fallo ora qua sotto!", _ -> registrati(callback));
         indietro.getStyleClass().setAll("indietro");
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> autenticazione(null, _ -> {}));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> autenticazione(_ -> {}));
         HBox pulsantiBox = new HBox(40, accedi, esci);
         pulsantiBox.setAlignment(Pos.CENTER);
 
@@ -98,7 +98,7 @@ public class GUI_GestioneUtenti {
         base.setCenter(layout);
     }
 
-    public static void registrati(Utente utente) {
+    public static void registrati(Consumer<Utente> callback) {
         // Crea i campi per inserire i dati
         Label labelNome = InterfacciaHelper.creaLabel("Nome Utente");
         TextField campoNome = InterfacciaHelper.creaCampoTesto("");
@@ -116,10 +116,10 @@ public class GUI_GestioneUtenti {
             } else {
                 Utente a = new Utente("Utente", nome, password);
                 gestioneUtenti.aggiungiUtente(a);
-                accedi(_ -> {}, utente);
+                callback.accept(a);
             }
         });
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> autenticazione(null, _ -> {}));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> autenticazione(_ -> {}));
         // Layout per la finestra di prenotazione
         VBox layout = new VBox(10, labelNome, campoNome, labelPassword, campoPassword, registrati, esci);
         layout.setAlignment(Pos.CENTER);
