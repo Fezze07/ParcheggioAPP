@@ -8,7 +8,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -296,41 +298,138 @@ public class FunzioniAdmin {
     }
 
     public static void modificaApertura(Utente utente) {
-        TextField campoApertura = InterfacciaHelper.creaCampoTesto("Apertura = " +InterfacciaHelper.getApertura());
-        TextField campoChiusura = InterfacciaHelper.creaCampoTesto("Chiusura = " +InterfacciaHelper.getChiusura());
+        TextField campoApertura = InterfacciaHelper.creaCampoTesto(String.valueOf(InterfacciaHelper.getApertura()));
+        TextField campoChiusura = InterfacciaHelper.creaCampoTesto(String.valueOf(InterfacciaHelper.getChiusura()));
+        campoApertura.getStyleClass().add("campo-selezione");
+        campoChiusura.getStyleClass().add("campo-selezione");
+
         VBox contenutoOrari = new VBox(10);
         contenutoOrari.setPadding(new Insets(10));
-        contenutoOrari.getChildren().addAll(
-                InterfacciaHelper.creaLabel("Orario di apertura:"), campoApertura,
-                InterfacciaHelper.creaLabel("Orario di chiusura:"), campoChiusura
-        );
+        Label labelApertura = new Label("Orario di apertura:");
+        labelApertura.getStyleClass().add("etichetta-selezione");
+        Label labelChiusura = new Label("Orario di chiusura:");
+        labelChiusura.getStyleClass().add("etichetta-selezione");
+        contenutoOrari.getChildren().addAll(labelApertura, campoApertura, labelChiusura, campoChiusura);
+        contenutoOrari.getStyleClass().add("griglia-sezione");
+
         TitledPane orari = new TitledPane("Orari Apertura", contenutoOrari);
+        orari.getStyleClass().add("pannello");
         orari.getStyleClass().add("sezione-orari");
         orari.setExpanded(true);
+        orari.setMaxWidth(450);
+        orari.setPrefWidth(450);
 
         Button salva = InterfacciaHelper.creaPulsante("Salva Tutto", _ -> {
             try {
-                double oraApertura = Double.parseDouble(campoApertura.getText().trim());
-                double oraChiusura = Double.parseDouble(campoChiusura.getText().trim());
-                if (oraApertura < 0 || oraApertura > 23 || oraChiusura < 0 || oraChiusura > 23) {
-                    InterfacciaHelper.mostraErrore("Gli orari devono essere tra 0 e 23.");
-                    return;
+                String aperturaText = campoApertura.getText().trim().replace(",", ".");
+                String chiusuraText = campoChiusura.getText().trim().replace(",", ".");
+                Double oraApertura = aperturaText.isEmpty() ? null : Double.parseDouble(aperturaText);
+                Double oraChiusura = chiusuraText.isEmpty() ? null : Double.parseDouble(chiusuraText);
+                if (oraApertura != null) {
+                    if (oraApertura < 0 || oraApertura > 23) {
+                        InterfacciaHelper.mostraErrore("L'orario di apertura deve essere tra 0 e 23.");
+                        return;
+                    }
+                    if (InterfacciaHelper.multiploDiQuindici(oraApertura)) {
+                        InterfacciaHelper.mostraErrore("L'orario di apertura deve essere multiplo di 15 minuti (es. 8.15, 8.30, 8.45).");
+                        return;
+                    }
                 }
-                if (oraApertura >= oraChiusura) {
+                if (oraChiusura != null) {
+                    if (oraChiusura < 0 || oraChiusura > 23) {
+                        InterfacciaHelper.mostraErrore("L'orario di chiusura deve essere tra 0 e 23.");
+                        return;
+                    }
+                    if (InterfacciaHelper.multiploDiQuindici(oraChiusura)) {
+                        InterfacciaHelper.mostraErrore("L'orario di chiusura deve essere multiplo di 15 minuti (es. 8.15, 8.30, 8.45).");
+                        return;
+                    }
+                }
+                if (oraApertura != null && oraChiusura != null && oraApertura >= oraChiusura) {
                     InterfacciaHelper.mostraErrore("L'orario di apertura deve essere prima di quello di chiusura.");
                     return;
                 }
                 InterfacciaHelper.setOrariParcheggi(oraApertura, oraChiusura);
                 InterfacciaHelper.mostraConferma("Orari aggiornati con successo!");
-            } catch (Exception e) {
-                InterfacciaHelper.mostraErrore("Errore durante il salvataggio degli orari.");
+            } catch (NumberFormatException e) {
+                InterfacciaHelper.mostraErrore("Inserisci un numero valido! Usa il punto o la virgola per i decimali. (es. 8.30)");
             }
         });
         Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
         VBox contenitore = new VBox(20);
         contenitore.setAlignment(Pos.CENTER);
-        contenitore.getStyleClass().add("contenitore-tariffe");
         contenitore.getChildren().addAll(orari, salva, esci);
         base.setCenter(contenitore);
     }
+
+    public static void inserisciDateChiusura(Utente utente) {
+        VBox contenitore = new VBox(15);
+        contenitore.setPadding(new Insets(15));
+        contenitore.setAlignment(Pos.CENTER);
+        Label titolo = new Label("Inserisci date di chiusura");
+        titolo.getStyleClass().add("etichetta-selezione");
+
+        HBox inputBox = new HBox(8);
+        TextField giorno = InterfacciaHelper.creaCampoTesto("");
+        giorno.setPromptText("GG");
+        giorno.setPrefWidth(50);
+        giorno.getStyleClass().add("campo-selezione");
+        TextField mese = InterfacciaHelper.creaCampoTesto("");
+        mese.setPromptText("MM");
+        mese.setPrefWidth(50);
+        mese.getStyleClass().add("campo-selezione");
+        TextField anno = InterfacciaHelper.creaCampoTesto("");
+        anno.setPromptText("AAAA");
+        anno.setPrefWidth(70);
+        anno.getStyleClass().add("campo-selezione");
+
+        Button aggiungi = new Button("Aggiungi");
+        aggiungi.getStyleClass().add("buttone-aggiungi-date");
+        inputBox.getChildren().addAll(giorno, mese, anno, aggiungi);
+        inputBox.setAlignment(Pos.CENTER);
+        VBox listaDate = new VBox(6);
+        listaDate.getStyleClass().add("lista-date");
+        listaDate.setAlignment(Pos.CENTER);
+        listaDate.setMaxWidth(400);
+        listaDate.setPadding(new Insets(10));
+        Set<LocalDate> dateInserite = new HashSet<>();
+
+        Runnable aggiornaLista = () -> {
+            listaDate.getChildren().clear();
+            for (LocalDate d : dateInserite) {
+                Label lbl = new Label(d.toString());
+                lbl.getStyleClass().add("etichetta-selezione");
+                listaDate.getChildren().add(lbl);
+            }
+        };
+        aggiungi.setOnAction(_ -> {
+            try {
+                int g = Integer.parseInt(giorno.getText().trim());
+                int m = Integer.parseInt(mese.getText().trim());
+                int a = Integer.parseInt(anno.getText().trim());
+                LocalDate data = LocalDate.of(a, m, g);
+                if (dateInserite.contains(data)) {
+                    InterfacciaHelper.mostraErrore("Data già inserita!");
+                    return;
+                }
+                dateInserite.add(data);
+                aggiornaLista.run();
+                giorno.clear();
+                mese.clear();
+                anno.clear();
+            } catch (DateTimeException ex) {
+                InterfacciaHelper.mostraErrore("Data non valida!");
+            } catch (NumberFormatException ex) {
+                InterfacciaHelper.mostraErrore("Inserisci numeri validi!");
+            }
+        });
+        Button salva = InterfacciaHelper.creaPulsante("Salva date", _ -> {
+            InterfacciaHelper.setGiorniChiusura(dateInserite);
+            InterfacciaHelper.mostraConferma("Date salvate!");
+        });
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        contenitore.getChildren().addAll(titolo, inputBox, listaDate, salva, esci);
+        base.setCenter(contenitore);
+    }
+
 }

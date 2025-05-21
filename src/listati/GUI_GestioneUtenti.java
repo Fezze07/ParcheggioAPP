@@ -81,8 +81,6 @@ public class GUI_GestioneUtenti {
             if (gestioneUtenti.verificaCredenziali(nome, password)) {
                 Utente u = gestioneUtenti.ritornaUtente(nome);
                 callback.accept(u);
-            } else {
-                InterfacciaHelper.mostraErrore("Impossibile trovare l'utente");
             }
         });
         Button indietro = InterfacciaHelper.creaPulsante("Non ancora registrato, fallo ora qua sotto!", _ -> registrati(callback));

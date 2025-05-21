@@ -6,9 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class SalvaCarica {
     public static void esportaParcheggio(List<Posto> prenotazioni) {
@@ -232,6 +230,58 @@ public class SalvaCarica {
             }
         } catch (IOException | URISyntaxException | NumberFormatException e) {
             InterfacciaHelper.mostraErrore("Errore nel caricamento tariffe:\n" + e.getMessage());
+        }
+    }
+
+    public static void salvaOrari(Double apertura, Double chiusura, Set<LocalDate> giorniChiusura) {
+        try {
+            String pathFile = GestoreDatabase.getPathDatabase("orari.txt");
+            File file = new File(pathFile);
+            try (FileWriter scrivi = new FileWriter(file)) {
+                scrivi.write(apertura +"\n");
+                scrivi.write(chiusura +"\n");
+                if(giorniChiusura!=null && !giorniChiusura.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (LocalDate d : giorniChiusura) {
+                        sb.append(d.toString()).append(",");
+                    }
+                    sb.deleteCharAt(sb.length() - 1);
+                    scrivi.write(sb.toString());
+                } else {
+                    scrivi.write("null");
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            InterfacciaHelper.mostraErrore("Errore nell'esportazione degli orari:\n" + e.getMessage());
+        }
+    }
+
+    public static void caricaOrari() {
+        try {
+            String pathFile = GestoreDatabase.getPathDatabase("orari.txt");
+            File file = new File(pathFile);
+            if (!file.exists()) return;
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String aperturaString = reader.readLine();
+                String chiusuraString = reader.readLine();
+                String giorniChiusuraString = reader.readLine();
+                if (aperturaString == null || chiusuraString == null) return;
+                Double apertura = Double.parseDouble(aperturaString);
+                Double chiusura = Double.parseDouble(chiusuraString);
+                InterfacciaHelper.setOrariParcheggi(apertura,chiusura);
+                if (giorniChiusuraString != null && !giorniChiusuraString.equals("null")) {
+                    Set<LocalDate> giorniChiusura = new HashSet<>();
+                    String[] parts = giorniChiusuraString.split(",");
+                    for (String part : parts) {
+                        giorniChiusura.add(LocalDate.parse(part.trim()));
+                    }
+                    InterfacciaHelper.setGiorniChiusura(giorniChiusura);
+                } else {
+                    InterfacciaHelper.setGiorniChiusura(null);
+                }
+            }
+        } catch (IOException | URISyntaxException | NumberFormatException e) {
+            InterfacciaHelper.mostraErrore("Errore nel caricamento degli orari:\n" + e.getMessage());
         }
     }
 }

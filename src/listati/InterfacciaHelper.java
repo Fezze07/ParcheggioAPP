@@ -18,11 +18,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class InterfacciaHelper {
     private static double ORARIO_APERTURA = 8;
     private static double ORARIO_CHIUSURA = 20;
+    private static Set<LocalDate> GIORNI_CHIUSURA = new HashSet<>();
     private static BorderPane base;
     public static void setBase(BorderPane root) {
         base = root;
@@ -34,10 +37,16 @@ public class InterfacciaHelper {
     public static double getChiusura() {
         return ORARIO_CHIUSURA;
     }
+    public static void setOrariParcheggi(Double apertura, Double chiusura) {
+        if (apertura != null) ORARIO_APERTURA = apertura;
+        if (chiusura != null) ORARIO_CHIUSURA = chiusura;
+        SalvaCarica.salvaOrari(ORARIO_APERTURA, ORARIO_CHIUSURA, GIORNI_CHIUSURA);
+    }
 
-    public static void setOrariParcheggi(double apertura, double chiusura) {
-        ORARIO_APERTURA=apertura;
-        ORARIO_CHIUSURA=chiusura;
+    public static void setGiorniChiusura(Set<LocalDate> giorniChiusura) {
+        if (giorniChiusura != null && !giorniChiusura.isEmpty()) GIORNI_CHIUSURA = giorniChiusura;
+        else GIORNI_CHIUSURA = null;
+        SalvaCarica.salvaOrari(ORARIO_APERTURA, ORARIO_CHIUSURA, GIORNI_CHIUSURA);
     }
 
     public static TextField creaCampoTesto(String testo) {
@@ -89,15 +98,11 @@ public class InterfacciaHelper {
 
     public static DatePicker creaDatePicker() {
         DatePicker data = new DatePicker();
-        return bloccaDatePassate(data);
-    }
-
-    public static DatePicker bloccaDatePassate(DatePicker picker) {
-        picker.setDayCellFactory(_ -> new DateCell() {
+        data.setDayCellFactory(_ -> new DateCell() {
             @Override
             public void updateItem(LocalDate giorno, boolean vuoto) {
                 super.updateItem(giorno, vuoto);
-                if (giorno.isBefore(LocalDate.now())) {
+                if (giorno.isBefore(LocalDate.now()) || (GIORNI_CHIUSURA != null && GIORNI_CHIUSURA.contains(giorno))) {
                     setDisable(true);
                     setStyle("-fx-background-color: #8B0000; -fx-text-fill: white;");
                 } else {
@@ -105,12 +110,15 @@ public class InterfacciaHelper {
                 }
             }
         });
-        return picker;
+        return data;
     }
 
     public static Slider creaSliderOrario(LocalDateTime dataOra) {
-        int aperturaMinuti = (int) (ORARIO_APERTURA * 60);
-        int chiusuraMinuti = (int) (ORARIO_CHIUSURA * 60);
+        double apertura = convertiOrarioFinto(ORARIO_APERTURA);
+        double chiusura = convertiOrarioFinto(ORARIO_CHIUSURA);
+        int aperturaMinuti = (int) Math.round(apertura * 60);
+        int chiusuraMinuti = (int) Math.round(chiusura * 60);
+
         int valoreIniziale = (dataOra != null) ? dataOra.getHour() * 60 + dataOra.getMinute() : aperturaMinuti;
         valoreIniziale = ((valoreIniziale + 7) / 15) * 15;
         Slider slider = new Slider(aperturaMinuti, chiusuraMinuti, valoreIniziale);
@@ -119,7 +127,25 @@ public class InterfacciaHelper {
         slider.setMajorTickUnit(60);
         slider.setMinorTickCount(3);
         slider.setSnapToTicks(true);
+
+        slider.valueProperty().addListener((_, _, newVal) -> {
+            int val = (int) Math.round(newVal.doubleValue());
+            int snappedVal = ((val + 7) / 15) * 15;
+            if (snappedVal != val) {
+                slider.setValue(snappedVal);
+            }
+        });
         return slider;
+    }
+
+    public static double convertiOrarioFinto(double input) {
+        int ore = (int) input;
+        double decimale = input - ore;
+        if (Math.abs(decimale - 0.0) < 0.01) return ore * 1.0;
+        if (Math.abs(decimale - 0.15) < 0.01) return ore + 0.25;
+        if (Math.abs(decimale - 0.3) < 0.01) return ore + 0.5;
+        if (Math.abs(decimale - 0.45) < 0.01) return ore + 0.75;
+        throw new IllegalArgumentException("Inserisci solo valori 8.0, 8.15, 8.3, 8.45");
     }
 
     public static String formattaOrarioDaMinuti(int minutiTotali) {
@@ -129,13 +155,13 @@ public class InterfacciaHelper {
     }
 
     public static String getOrarioFromSlider(double value) {
-        return formattaOrarioDaMinuti((int) value);
+        int minutiTotali = (int) Math.round(value);
+        return formattaOrarioDaMinuti(minutiTotali);
     }
 
     public static LocalTime minutiToOrario(int minuti) {
         return LocalTime.of(minuti / 60, minuti % 60);
     }
-
     public static LocalDateTime creaDataOrario(LocalDate data, Slider slider) {
         return LocalDateTime.of(data, minutiToOrario((int) slider.getValue()));
     }
@@ -189,6 +215,11 @@ public class InterfacciaHelper {
 
     private static boolean campoVuoto(TextField... campi) {
         return Stream.of(campi).anyMatch(f -> f.getText().isEmpty());
+    }
+
+    public static boolean multiploDiQuindici(double ora) {
+        int minuti = (int) Math.round((ora - Math.floor(ora)) * 100);
+        return minuti % 15 != 0;
     }
 
     private static boolean targaValida(String targa) {

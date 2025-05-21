@@ -29,6 +29,7 @@ public class ParcheggioApp extends Application {
         GestioneUtenti.caricaDatabaseUtenti();
         GestioneParcheggio.caricaPrezzi();
         InterfacciaHelper.autenticazione();
+        GestioneParcheggio.caricaOrari();
     }
 
     public static void mostraMenuUtente(Utente utente) {
@@ -51,7 +52,7 @@ public class ParcheggioApp extends Application {
         Button pulsVisualizzaPrenotazioniAttive = InterfacciaHelper.creaPulsante("Visualizza prenotazioni attive", _ -> GestioneParcheggio.visualizzaPrenotazioniAttive(utente));
         Button pulsModificaOrari = InterfacciaHelper.creaPulsante("Modifica orari", _ -> FunzioniAdmin.modificaApertura(utente));
         Button pulsGestioneTariffe = InterfacciaHelper.creaPulsante("Gestione tariffe", _ -> FunzioniAdmin.modificaTariffe(utente));
-        Button pulsChiudiGiorni = InterfacciaHelper.creaPulsante("Chiudi Giorni", _ -> FunzioniAdmin.modificaApertura(utente));
+        Button pulsChiudiGiorni = InterfacciaHelper.creaPulsante("Chiudi Giorni", _ -> FunzioniAdmin.inserisciDateChiusura(utente));
         Button pulsLogout = InterfacciaHelper.creaPulsante("Logout", _ -> InterfacciaHelper.effettuaLogout());
         VBox layout = creaLayoutMenu(pulsSimulaPrenotazione, pulsCancellaUtenti, pulsEsportaDatabase, pulsCaricaDatabaseUtenti, pulsVisualizzaPrenotazioniAttive, pulsModificaOrari, pulsGestioneTariffe, pulsChiudiGiorni, pulsLogout);
         base.setCenter(layout);

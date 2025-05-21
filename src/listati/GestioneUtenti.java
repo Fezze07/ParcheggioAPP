@@ -24,8 +24,14 @@ public class GestioneUtenti {
 
     public boolean verificaCredenziali(String nomeUtente, String password) {
         for (Utente u : databaseUtenti) {
-            if (u.getNomeUtente().equals(nomeUtente) && u.getPassword().equals(password)) return true;
+            if(u.getNomeUtente().equals(nomeUtente))
+                if (u.getPassword().equals(password)) {
+                    return true;
+                } else {
+                    InterfacciaHelper.mostraErrore("Password non corretta");
+                }
         }
+        InterfacciaHelper.mostraErrore("Utente non trovato!");
         return false;
     }
 

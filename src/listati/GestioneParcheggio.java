@@ -33,6 +33,10 @@ public class GestioneParcheggio {
         postiPrenotati.addAll(caricati);
     }
 
+    public static void caricaOrari() {
+        SalvaCarica.caricaOrari();
+    }
+
     public static void caricaPrezzi() {
         SalvaCarica.caricaPrezzi();
     }

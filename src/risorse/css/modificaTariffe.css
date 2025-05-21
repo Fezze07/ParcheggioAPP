@@ -83,3 +83,33 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
 }
+
+.buttone-aggiungi-date {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.buttone-aggiungi-date:hover {
+    -fx-background-color: #45a049;
+}
+
+.lista-date {
+    -fx-background-color: #121212;
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-padding: 10;
+    -fx-spacing: 6;
+    -fx-max-height: 150px;
+    -fx-overflow-y: auto;
+    -fx-font-size: 14px;
+    -fx-text-fill: #ddd;
+}
+
+
