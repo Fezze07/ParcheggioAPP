@@ -1,5 +1,6 @@
 package listati;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -182,12 +183,8 @@ public class FunzioniAdmin {
     }
 
     public static void modificaTariffe(Utente utente) {
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.CENTER);
-        root.getStyleClass().add("box-admin");
-
         // ====== SEZIONE VEICOLI ======
-        TitledPane sezioneVeicoli = creaSezionePrezzi(
+        TitledPane sezioneVeicoli = creaSezione(
                 "Prezzi Veicoli",
                 Prezzi::getPrezzo,
                 Prezzi::setPrezzoVeicolo,
@@ -198,8 +195,9 @@ public class FunzioniAdmin {
                         "Corriera", "Corriera"
                 )
         );
+        sezioneVeicoli.getStyleClass().add("sezione-veicoli");
         // ====== SEZIONE OPZIONI EXTRA ======
-        TitledPane sezioneOpzioni = creaSezionePrezzi(
+        TitledPane sezioneOpzioni = creaSezione(
                 "Prezzi Opzioni Extra",
                 Prezzi::getPrezzoOpzioni,
                 Prezzi::setPrezzoOpzione,
@@ -212,8 +210,9 @@ public class FunzioniAdmin {
                         6, "Pieno carburante"
                 )
         );
+        sezioneOpzioni.getStyleClass().add("sezione-opzioni-extra");
         // ====== SEZIONE GIORNI ======
-        TitledPane sezioneGiorni = creaSezionePrezzi(
+        TitledPane sezioneGiorni = creaSezione(
                 "Prezzi Giornalieri",
                 g -> Prezzi.getPrezzoGiorno(DayOfWeek.valueOf(g)),
                 (g, p) -> Prezzi.setPrezzoGiorno(DayOfWeek.valueOf(g), p),
@@ -227,11 +226,16 @@ public class FunzioniAdmin {
                         "SUNDAY", "Domenica"
                 )
         );
+        sezioneGiorni.getStyleClass().add("sezione-giorni");
         // ====== SEZIONE COSTO ORARIO ======
         Label labelOrario = new Label("Costo ogni 15 minuti:");
         TextField campoOrario = new TextField(String.valueOf(Prezzi.costoOrario));
+        labelOrario.getStyleClass().add("etichetta-orario");
+        campoOrario.getStyleClass().add("campo-costo-orario");
+
         HBox orarioBox = new HBox(10, labelOrario, campoOrario);
         orarioBox.setAlignment(Pos.CENTER);
+        orarioBox.getStyleClass().add("contenitore-orario");
 
         // ====== PULSANTI ======
         Button salva = InterfacciaHelper.creaPulsante("Salva Tutto", _ -> {
@@ -245,21 +249,37 @@ public class FunzioniAdmin {
         });
 
         Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
-        root.getChildren().addAll(sezioneVeicoli, sezioneOpzioni, sezioneGiorni, orarioBox, salva, esci);
-        base.setCenter(root);
+        VBox contenitoreTariffe = new VBox(20);
+        contenitoreTariffe.setAlignment(Pos.CENTER);
+        contenitoreTariffe.getStyleClass().add("contenitore-tariffe");
+        contenitoreTariffe.getChildren().addAll(sezioneVeicoli, sezioneOpzioni, sezioneGiorni, orarioBox, salva, esci);
+
+        VBox.setMargin(sezioneVeicoli, new Insets(0, 0, 0, 0));
+        sezioneVeicoli.setMaxWidth(450);
+        sezioneVeicoli.setPrefWidth(450);
+        sezioneOpzioni.setMaxWidth(450);
+        sezioneOpzioni.setPrefWidth(450);
+        sezioneGiorni.setMaxWidth(450);
+        sezioneGiorni.setPrefWidth(450);
+
+        base.setCenter(contenitoreTariffe);
     }
 
-    private static <T> TitledPane creaSezionePrezzi(String titolo, Function<T, Integer> getter, BiConsumer<T, Integer> setter, Map<T, String> etichette) {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
+    private static <T> TitledPane creaSezione(String titolo, Function<T, Integer> getter, BiConsumer<T, Integer> setter, Map<T, String> etichette) {
+        GridPane grigliaSezione = new GridPane();
+        grigliaSezione.setHgap(15);
+        grigliaSezione.setVgap(12);
+        grigliaSezione.getStyleClass().add("griglia-sezione");
         int riga = 0;
         for (T chiave : etichette.keySet()) {
-            Label label = new Label(etichette.get(chiave) + ":");
-            TextField campo = new TextField(String.valueOf(getter.apply(chiave)));
-            grid.add(label, 0, riga);
-            grid.add(campo, 1, riga);
-            campo.textProperty().addListener((_, _, newVal) -> {
+            Label etichettaPrezzo = new Label(etichette.get(chiave) + ":");
+            etichettaPrezzo.getStyleClass().add("etichetta-selezione");
+            TextField campoPrezzo = new TextField(String.valueOf(getter.apply(chiave)));
+            campoPrezzo.getStyleClass().add("campo-selezione");
+
+            grigliaSezione.add(etichettaPrezzo, 0, riga);
+            grigliaSezione.add(campoPrezzo, 1, riga);
+            campoPrezzo.textProperty().addListener((_, _, newVal) -> {
                 try {
                     int valore = Integer.parseInt(newVal);
                     setter.accept(chiave, valore);
@@ -269,8 +289,48 @@ public class FunzioniAdmin {
             });
             riga++;
         }
-        TitledPane pane = new TitledPane(titolo, grid);
+        TitledPane pane = new TitledPane(titolo, grigliaSezione);
+        pane.getStyleClass().add("pannello");
         pane.setExpanded(false);
         return pane;
+    }
+
+    public static void modificaApertura(Utente utente) {
+        TextField campoApertura = InterfacciaHelper.creaCampoTesto("Apertura = " +InterfacciaHelper.getApertura());
+        TextField campoChiusura = InterfacciaHelper.creaCampoTesto("Chiusura = " +InterfacciaHelper.getChiusura());
+        VBox contenutoOrari = new VBox(10);
+        contenutoOrari.setPadding(new Insets(10));
+        contenutoOrari.getChildren().addAll(
+                InterfacciaHelper.creaLabel("Orario di apertura:"), campoApertura,
+                InterfacciaHelper.creaLabel("Orario di chiusura:"), campoChiusura
+        );
+        TitledPane orari = new TitledPane("Orari Apertura", contenutoOrari);
+        orari.getStyleClass().add("sezione-orari");
+        orari.setExpanded(true);
+
+        Button salva = InterfacciaHelper.creaPulsante("Salva Tutto", _ -> {
+            try {
+                double oraApertura = Double.parseDouble(campoApertura.getText().trim());
+                double oraChiusura = Double.parseDouble(campoChiusura.getText().trim());
+                if (oraApertura < 0 || oraApertura > 23 || oraChiusura < 0 || oraChiusura > 23) {
+                    InterfacciaHelper.mostraErrore("Gli orari devono essere tra 0 e 23.");
+                    return;
+                }
+                if (oraApertura >= oraChiusura) {
+                    InterfacciaHelper.mostraErrore("L'orario di apertura deve essere prima di quello di chiusura.");
+                    return;
+                }
+                InterfacciaHelper.setOrariParcheggi(oraApertura, oraChiusura);
+                InterfacciaHelper.mostraConferma("Orari aggiornati con successo!");
+            } catch (Exception e) {
+                InterfacciaHelper.mostraErrore("Errore durante il salvataggio degli orari.");
+            }
+        });
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        VBox contenitore = new VBox(20);
+        contenitore.setAlignment(Pos.CENTER);
+        contenitore.getStyleClass().add("contenitore-tariffe");
+        contenitore.getChildren().addAll(orari, salva, esci);
+        base.setCenter(contenitore);
     }
 }

@@ -82,7 +82,8 @@ public class GUI_Prenotazione {
         CheckBox checkBoxOpzioni = new CheckBox("Vuoi opzioni extra?");
         CheckBox[] opzioni = Stream.of("Custodia", "Albergo", "Disabili", "Bagni", "Picnic", "Pieno")
                 .map(CheckBox::new).toArray(CheckBox[]::new);
-        VBox boxOpzioniExtra = new VBox(5, opzioni);
+        VBox boxOpzioniExtra = new VBox(10, opzioni);
+        boxOpzioniExtra.setAlignment(Pos.CENTER);
         InterfacciaHelper.toggleBox(boxOpzioniExtra, false);
         checkBoxOpzioni.setOnAction(_ -> InterfacciaHelper.toggleBox(boxOpzioniExtra, checkBoxOpzioni.isSelected()));
 

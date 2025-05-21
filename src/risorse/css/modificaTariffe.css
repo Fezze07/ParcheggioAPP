@@ -1,0 +1,85 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #3a3a3a);
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.contenitore {
+    -fx-background-color: #2c2f33;
+    -fx-padding: 20px;
+    -fx-border-radius: 8px;
+    -fx-spacing: 15;
+    -fx-effect: dropshadow(gaussian, #3498db, 6, 0, 0, 0);
+}
+
+.sezione-veicoli, .sezione-opzioni-extra, .sezione-giorni, .sezione-orari{
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498db;
+    -fx-background-color: #252525dd;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+.griglia-sezione {
+    -fx-background-color: #1e1e1e;
+    -fx-padding: 15;
+    -fx-border-radius: 6;
+}
+
+.etichetta-orario {
+    -fx-text-fill: #3498db;
+    -fx-font-size: 15px;
+    -fx-translate-y: 2px;
+    -fx-opacity: 0.85;
+    -fx-padding: 0 0 4px 4px;
+    -fx-pref-width: 200px;
+    -fx-font-weight: bold;
+}
+
+.etichetta-selezione {
+    -fx-text-fill: #3498db;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+
+.campo-selezione, .campo-costo-orario {
+    -fx-background-color: #333;
+    -fx-text-fill: #ddd;
+    -fx-font-weight: bold;
+    -fx-border-color: #3498db;
+    -fx-border-radius: 5;
+    -fx-padding: 6 10 6 10;
+    -fx-pref-width: 120px;
+}
+
+.contenitore-orario {
+    -fx-background-color: #222;
+    -fx-padding: 12;
+    -fx-border-radius: 8;
+    -fx-spacing: 15;
+    -fx-max-width: 600px;
+}
+
+.pannello {
+    -fx-text-fill: #3498db;
+    -fx-font-size: 15px;
+}
+
+.titled-pane {
+    -fx-background-color: #383c42;
+    -fx-text-fill: #3498db;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-color: #3498db;
+    -fx-max-width: 600px;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #2f3339;
+    -fx-text-fill: #3498db;
+    -fx-padding: 10;
+    -fx-background-insets: 0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}

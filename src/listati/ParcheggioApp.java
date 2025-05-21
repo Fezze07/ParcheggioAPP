@@ -49,11 +49,11 @@ public class ParcheggioApp extends Application {
         Button pulsEsportaDatabase = InterfacciaHelper.creaPulsante("Esporta database parcheggio", _ -> GestioneParcheggio.esportaParcheggio());
         Button pulsCaricaDatabaseUtenti = InterfacciaHelper.creaPulsante("Carica database utenti", _ -> GestioneUtenti.caricaDatabaseUtenti());
         Button pulsVisualizzaPrenotazioniAttive = InterfacciaHelper.creaPulsante("Visualizza prenotazioni attive", _ -> GestioneParcheggio.visualizzaPrenotazioniAttive(utente));
-        Button pulsModificaOrari = InterfacciaHelper.creaPulsante("Modifica orari", _ -> GestioneUtenti.cancellaUtenteAdmin(utente));
+        Button pulsModificaOrari = InterfacciaHelper.creaPulsante("Modifica orari", _ -> FunzioniAdmin.modificaApertura(utente));
         Button pulsGestioneTariffe = InterfacciaHelper.creaPulsante("Gestione tariffe", _ -> FunzioniAdmin.modificaTariffe(utente));
-        Button pulsBlackout = InterfacciaHelper.creaPulsante("Gestione blackout", _ -> GestioneUtenti.cancellaUtenteAdmin(utente));
+        Button pulsChiudiGiorni = InterfacciaHelper.creaPulsante("Chiudi Giorni", _ -> FunzioniAdmin.modificaApertura(utente));
         Button pulsLogout = InterfacciaHelper.creaPulsante("Logout", _ -> InterfacciaHelper.effettuaLogout());
-        VBox layout = creaLayoutMenu(pulsSimulaPrenotazione, pulsCancellaUtenti, pulsEsportaDatabase, pulsCaricaDatabaseUtenti, pulsVisualizzaPrenotazioniAttive, pulsModificaOrari, pulsGestioneTariffe, pulsBlackout, pulsLogout);
+        VBox layout = creaLayoutMenu(pulsSimulaPrenotazione, pulsCancellaUtenti, pulsEsportaDatabase, pulsCaricaDatabaseUtenti, pulsVisualizzaPrenotazioniAttive, pulsModificaOrari, pulsGestioneTariffe, pulsChiudiGiorni, pulsLogout);
         base.setCenter(layout);
     }
 
@@ -74,6 +74,7 @@ public class ParcheggioApp extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/risorse/css/confermaPrenotazione.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/risorse/css/visualizzaParcheggio.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/risorse/css/scegliOraParcheggio.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/risorse/css/modificaTariffe.css")).toExternalForm());
     }
 
     public static void inizializzaRootPane(BorderPane base, StackPane root) {

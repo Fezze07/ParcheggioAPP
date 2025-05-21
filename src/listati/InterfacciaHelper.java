@@ -21,11 +21,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 public class InterfacciaHelper {
-    private static final int ORARIO_APERTURA = 8 * 60;
-    private static final int ORARIO_CHIUSURA = 20 * 60;
+    private static double ORARIO_APERTURA = 8;
+    private static double ORARIO_CHIUSURA = 20;
     private static BorderPane base;
     public static void setBase(BorderPane root) {
         base = root;
+    }
+
+    public static double getApertura() {
+       return ORARIO_APERTURA;
+    }
+    public static double getChiusura() {
+        return ORARIO_CHIUSURA;
+    }
+
+    public static void setOrariParcheggi(double apertura, double chiusura) {
+        ORARIO_APERTURA=apertura;
+        ORARIO_CHIUSURA=chiusura;
     }
 
     public static TextField creaCampoTesto(String testo) {
@@ -97,9 +109,11 @@ public class InterfacciaHelper {
     }
 
     public static Slider creaSliderOrario(LocalDateTime dataOra) {
-        int valoreIniziale = (dataOra != null) ? dataOra.getHour() * 60 + dataOra.getMinute() : ORARIO_APERTURA;
+        int aperturaMinuti = (int) (ORARIO_APERTURA * 60);
+        int chiusuraMinuti = (int) (ORARIO_CHIUSURA * 60);
+        int valoreIniziale = (dataOra != null) ? dataOra.getHour() * 60 + dataOra.getMinute() : aperturaMinuti;
         valoreIniziale = ((valoreIniziale + 7) / 15) * 15;
-        Slider slider = new Slider(ORARIO_APERTURA, ORARIO_CHIUSURA, valoreIniziale);
+        Slider slider = new Slider(aperturaMinuti, chiusuraMinuti, valoreIniziale);
         slider.setBlockIncrement(15);
         slider.setShowTickMarks(true);
         slider.setMajorTickUnit(60);
