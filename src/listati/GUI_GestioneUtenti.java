@@ -136,10 +136,10 @@ public class GUI_GestioneUtenti {
                 InterfacciaHelper.mostraErrore("La password non può essere vuota!");
             } else {
                 GestioneUtenti.cambiaPassword(utente, nuovaPassword);
-                InterfacciaHelper.mostraConfermaRunnable("Password cambiata con successo!", () -> ParcheggioApp.mostraMenuUtente(utente));
+                InterfacciaHelper.mostraConfermaRunnable("Password cambiata con successo!", () -> SchermataIniziale.aggiornaMenu(utente));
             }
         });
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuUtente(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.aggiornaMenu(utente));
         VBox layout = new VBox(10, labelPassword, campoPassword, salva[0], esci);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(50));
@@ -159,10 +159,10 @@ public class GUI_GestioneUtenti {
                 InterfacciaHelper.mostraErrore("Nome utente già in uso!");
             } else {
                 gestioneUtenti.cambiaNomeUtente(utente, nuovoNome);
-                InterfacciaHelper.mostraConfermaRunnable("Nome utente cambiato con successo!", () -> ParcheggioApp.mostraMenuUtente(utente));
+                InterfacciaHelper.mostraConfermaRunnable("Nome utente cambiato con successo!", () -> SchermataIniziale.aggiornaMenu(utente));
             }
         });
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuUtente(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.aggiornaMenu(utente));
         VBox layout = new VBox(10, labelNome, campoNome, salva[0], esci);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(50));

@@ -286,21 +286,6 @@ public class InterfacciaHelper {
         box.setManaged(visibile);
     }
 
-    public static void autenticazione() {
-        effettuaLogout();
-    }
-
-    public static void effettuaLogout() {
-        GUI_GestioneUtenti.autenticazione(utente -> {
-            if (utente == null) return;
-            if ("Admin".equals(utente.getTipo())) {
-                ParcheggioApp.mostraMenuAdmin(utente);
-            } else {
-                ParcheggioApp.mostraMenuUtente(utente);
-            }
-        });
-    }
-
     public static HBox creaLabelConIcona(String testoLabel, String nomeFileIcona) {
         ImageView icona = new ImageView(caricaIcona(nomeFileIcona));
         icona.setFitHeight(20);

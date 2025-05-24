@@ -36,22 +36,6 @@
     -fx-background-color: #00e6ac;
 }
 
-/* Posti occupati/liberi */
-.posto-occupato {
-    -fx-background-color: #d63031;
-    -fx-text-fill: white;
-}
-
-.posto-libero {
-    -fx-background-color: #2ecc71;
-    -fx-text-fill: white;
-}
-
-.posto-selezionato {
-    -fx-background-color: #0984e3;
-    -fx-text-fill: white;
-}
-
 .etichetta-periodo {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
@@ -63,4 +47,39 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
 }
+
+.posto-slot {
+    -fx-background-color: transparent;
+    -fx-cursor: default;
+    -fx-padding: 5;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.5, 0, 1);
+    -fx-alignment: center;
+}
+
+.posto-cliccabile {
+    -fx-cursor: hand;
+}
+
+.posto-cliccabile:hover {
+    -fx-border-color: #00e6ac;
+    -fx-background-color: rgba(0, 230, 172, 0.15);
+}
+
+.posto-selezionato {
+    -fx-border-color: #00e6ac;
+    -fx-background-color: rgba(0, 230, 172, 0.15);
+    -fx-border-width: 2;
+    -fx-text-fill: white;
+}
+
+.numero-posto {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-fill: white;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 2,0,0,1 );
+}
+
 

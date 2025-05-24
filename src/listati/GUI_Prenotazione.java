@@ -94,7 +94,7 @@ public class GUI_Prenotazione {
         HBox labelCostoTotale = InterfacciaHelper.creaLabelConIcona("Costo:", "icona-totale.png");
         labelCosto.setText("Costo della prenotazione: 0 euro");
         Button prenota = creaBottonePrenota(utente, campoNome, campoCognome, campoTarga, comboTipo, dataPicker, checkBoxOpzioni, opzioni);
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.aggiornaMenu(utente));
         HBox pulsanti = new HBox(40, prenota, esci);
         pulsanti.setAlignment(Pos.CENTER);
 
@@ -272,9 +272,9 @@ public class GUI_Prenotazione {
                     InterfacciaHelper.mostraConferma("Prenotazione completata! Costo finale: " + costo + " euro");
                     labelCosto.setText("Costo della prenotazione: " + costo + " euro");
                     if (utente.getTipo().equalsIgnoreCase("admin")) {
-                        ParcheggioApp.mostraMenuAdmin(utente);
+                        SchermataIniziale.mostraMenuAdmin(utente);
                     } else {
-                        ParcheggioApp.mostraMenuUtente(utente);
+                        SchermataIniziale.aggiornaMenu(utente);
                     }
 
                 });

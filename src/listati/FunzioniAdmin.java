@@ -50,7 +50,7 @@ public class FunzioniAdmin {
             }
         });
         prenotazioni.setButtonCell(prenotazioni.getCellFactory().call(null));
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.mostraMenuAdmin(utente));
         Button cancella = InterfacciaHelper.creaPulsante("Cancella prenotazione", _ -> eliminaPrenotazioneAdmin(postiPrenotati, utente));
 
         VBox layout = new VBox(10, prenotazioni, cancella, esci);
@@ -97,7 +97,7 @@ public class FunzioniAdmin {
                 InterfacciaHelper.mostraErrore("Seleziona una prenotazione prima di confermare.");
             }
         });
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuUtente(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.aggiornaMenu(utente));
         HBox pulsantiBox = new HBox(40, conferma, esci);
         pulsantiBox.setAlignment(Pos.CENTER);
         VBox layout = new VBox(10, scelta, pulsantiBox);
@@ -129,7 +129,7 @@ public class FunzioniAdmin {
             }
         });
         scelta.setButtonCell(scelta.getCellFactory().call(null));
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.mostraMenuAdmin(utente));
         Button conferma = InterfacciaHelper.creaPulsante("Conferma Eliminazione", _ -> {
             Posto selezionato = scelta.getValue();
             if (selezionato != null) {
@@ -168,7 +168,7 @@ public class FunzioniAdmin {
             }
         });
         scelta.setButtonCell(scelta.getCellFactory().call(null));
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.mostraMenuAdmin(utente));
         Button conferma = InterfacciaHelper.creaPulsante("Conferma Eliminazione", _ -> {
             Utente selezionato = scelta.getValue();
             if (selezionato != null) {
@@ -250,7 +250,7 @@ public class FunzioniAdmin {
             }
         });
 
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.mostraMenuAdmin(utente));
         VBox contenitoreTariffe = new VBox(20);
         contenitoreTariffe.setAlignment(Pos.CENTER);
         contenitoreTariffe.getStyleClass().add("contenitore-tariffe");
@@ -355,7 +355,7 @@ public class FunzioniAdmin {
                 InterfacciaHelper.mostraErrore("Inserisci un numero valido! Usa il punto o la virgola per i decimali. (es. 8.30)");
             }
         });
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.mostraMenuAdmin(utente));
         VBox contenitore = new VBox(20);
         contenitore.setAlignment(Pos.CENTER);
         contenitore.getChildren().addAll(orari, salva, esci);
@@ -388,6 +388,7 @@ public class FunzioniAdmin {
         inputBox.getChildren().addAll(giorno, mese, anno, aggiungi);
         inputBox.setAlignment(Pos.CENTER);
         VBox listaDate = new VBox(6);
+        listaDate.setVisible(false);
         listaDate.getStyleClass().add("lista-date");
         listaDate.setAlignment(Pos.CENTER);
         listaDate.setMaxWidth(400);
@@ -395,9 +396,12 @@ public class FunzioniAdmin {
         Set<LocalDate> dateInserite = new HashSet<>();
 
         Runnable aggiornaLista = () -> {
+            listaDate.setVisible(true);
             listaDate.getChildren().clear();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             for (LocalDate d : dateInserite) {
-                Label lbl = new Label(d.toString());
+                String dataFormattata = d.format(formatter);
+                Label lbl = new Label(dataFormattata);
                 lbl.getStyleClass().add("etichetta-selezione");
                 listaDate.getChildren().add(lbl);
             }
@@ -427,7 +431,7 @@ public class FunzioniAdmin {
             InterfacciaHelper.setGiorniChiusura(dateInserite);
             InterfacciaHelper.mostraConferma("Date salvate!");
         });
-        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> ParcheggioApp.mostraMenuAdmin(utente));
+        Button esci = InterfacciaHelper.creaPulsante("Esci", _ -> SchermataIniziale.mostraMenuAdmin(utente));
         contenitore.getChildren().addAll(titolo, inputBox, listaDate, salva, esci);
         base.setCenter(contenitore);
     }
